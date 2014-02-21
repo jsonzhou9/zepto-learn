@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>dome for zepto</title>
+</head>
+
+<body>
+<div class="wrap">
+	<a id="btn" href="#">click me</a>
+</div>
+<script type="text/javascript">
+var slice = [].slice; //相当于Array.prototype.slice
+var zepto = {};
+//匹配数字，字母，下划线，连接线"-"
+var simpleSelectorRE = /^[\w-]*$/; 
+//判断节点为document
+function isDocument(obj)   { return obj != null && obj.nodeType == obj.DOCUMENT_NODE }
+//选择器
+zepto.qsa = function(element, selector){
+  var found,
+	  maybeID = selector[0] == '#',
+	  maybeClass = !maybeID && selector[0] == '.',
+	  nameOnly = maybeID || maybeClass ? selector.slice(1) : selector, // Ensure that a 1 char tag name still gets checked
+	  isSimple = simpleSelectorRE.test(nameOnly) //判定当前选择器是简单的单个选择器
+  return (isDocument(element) && isSimple && maybeID) ?
+	( (found = element.getElementById(nameOnly)) ? [found] : [] ) :
+	(element.nodeType !== 1 && element.nodeType !== 9) ? [] :
+	slice.call( //将nodelist转换为数组
+	  isSimple && !maybeID ?
+		maybeClass ? element.getElementsByClassName(nameOnly) : // If it's simple, it could be a class
+		element.getElementsByTagName(selector) : // Or a tag
+		element.querySelectorAll(selector) // Or it's not simple, and we need to query all
+	)
+}
+
+var dom = zepto.qsa(document, '.wrap > #btn');
+alert(dom.length);
+</script>
+</body>
+</html>

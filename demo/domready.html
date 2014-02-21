@@ -1,0 +1,25 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>dome for zepto</title>
+<script type="text/javascript">
+var readyRE = /complete|loaded|interactive/;
+var $test = {
+	ready: function(callback){
+	  // IE下需要检测document.body元素已经创建
+	  if (readyRE.test(document.readyState) && document.body) callback()
+	  else document.addEventListener('DOMContentLoaded', function(){ callback() }, false)
+	  return this
+	}
+}
+$test.ready(function(){
+	alert('domready');			  
+});
+</script>
+</head>
+
+<body>
+<script type="text/javascript" src="http://res.tnt.qq.com/script/core.mini.js?v=2014"></script>
+</body>
+</html>

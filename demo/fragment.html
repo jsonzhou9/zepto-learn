@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>dome for zepto</title>
+</head>
+
+<body>
+<script type="text/javascript">
+var slice = [].slice;
+//匹配html标签
+var fragmentRE = /^\s*<(\w+|!)[^>]*>/;
+//简单的html标签
+var singleTagRE = /^<(\w+)\s*\/?>(?:<\/\1>|)$/;
+var tagExpanderRE = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/ig ;
+//创建所属容器
+var table = document.createElement('table');
+var tableRow = document.createElement('tr');
+var containers = {
+  'tr': document.createElement('tbody'),
+  'tbody': table, 'thead': table, 'tfoot': table,
+  'td': tableRow, 'th': tableRow,
+  '*': document.createElement('div')
+}
+
+var $ = zepto = {};
+
+zepto.fragment = function(html, name, properties) {
+  var dom, nodes, container
+
+  // A special case optimization for a single tag
+  if (singleTagRE.test(html)) dom = $(document.createElement(RegExp.$1))
+
+  if (!dom) {
+	if (html.replace) html = html.replace(tagExpanderRE, "<$1></$2>")
+	if (name === undefined) name = fragmentRE.test(html) && RegExp.$1
+	if (!(name in containers)) name = '*'
+
+	container = containers[name]
+	container.innerHTML = '' + html;
+	
+	var nlist = slice.call(container.childNodes);
+	for(var i=0;i<nlist.length;i++){
+		container.removeChild(nlist[i]);
+	}
+  }
+
+  /*if (isPlainObject(properties)) {
+	nodes = $(dom)
+	$.each(properties, function(key, value) {
+	  if (methodAttributes.indexOf(key) > -1) nodes[key](value)
+	  else nodes.attr(key, value)
+	})
+  }*/
+
+  return dom
+}
+
+function getDom(selector){
+	if(selector[0] == '<' && fragmentRE.test(selector)){
+		return zepto.fragment(selector, RegExp.$1);
+	}else{
+		return [];
+	}
+}
+
+alert(getDom('<div class="wrap"><a href="#">click</a></div>'));
+</script>
+</body>
+</html>
